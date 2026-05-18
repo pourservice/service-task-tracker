@@ -2721,6 +2721,146 @@
     font-size: 12px;
     color: var(--muted);
   }
+
+  /* ============== 대시보드 페이지 ============== */
+  .dash-toolbar {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    padding: 14px; background: var(--surface);
+    border: 1px solid var(--line); border-radius: var(--radius);
+    margin-bottom: 18px; align-items: center;
+    box-shadow: var(--shadow-sm);
+  }
+  .dash-toolbar input[type="search"] {
+    flex: 1; min-width: 200px;
+    padding: 9px 12px; border: 1px solid var(--line);
+    border-radius: var(--radius-sm); background: var(--bg);
+    font-size: 13px; color: var(--ink);
+  }
+  .dash-toolbar input[type="search"]:focus {
+    outline: none; border-color: var(--accent);
+    background: var(--surface);
+  }
+  .dash-toolbar select {
+    padding: 9px 12px; border: 1px solid var(--line);
+    border-radius: var(--radius-sm); background: var(--bg);
+    font-size: 13px; color: var(--ink); cursor: pointer;
+  }
+  .dash-toolbar .btn { margin-left: auto; }
+  .dash-grid {
+    display: grid; gap: 14px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  .dash-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex; flex-direction: column;
+    transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+    box-shadow: var(--shadow-sm);
+  }
+  .dash-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-soft);
+  }
+  .dash-thumb {
+    width: 100%; aspect-ratio: 16/9;
+    background: linear-gradient(135deg, var(--accent-soft), var(--accent-2-soft));
+    display: flex; align-items: center; justify-content: center;
+    color: var(--accent); font-size: 2.4rem; overflow: hidden;
+    position: relative;
+  }
+  .dash-thumb img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+  }
+  .dash-thumb-fallback {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.6rem;
+    color: var(--accent);
+    letter-spacing: -0.02em;
+  }
+  .dash-body { padding: 14px 16px 12px; flex: 1; display: flex; flex-direction: column; }
+  .dash-title {
+    font-family: var(--display);
+    font-weight: 700; font-size: 1.05rem;
+    margin: 0 0 6px 0; color: var(--ink);
+    line-height: 1.3; letter-spacing: -0.01em;
+  }
+  .dash-owner {
+    font-size: 12px; margin: 0 0 10px 0;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .dash-owner-chip {
+    background: var(--accent-soft); color: var(--accent);
+    padding: 3px 10px; border-radius: 999px;
+    font-weight: 600; font-size: 11px;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .dash-purpose {
+    font-size: 13px; color: var(--ink-2); margin: 0 0 12px 0;
+    line-height: 1.5;
+    display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .dash-tags {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 12px;
+  }
+  .dash-tag {
+    background: var(--line-2); color: var(--muted);
+    font-size: 11px; font-weight: 600;
+    padding: 2px 9px; border-radius: 999px;
+  }
+  .dash-meta {
+    font-size: 11px; color: var(--muted);
+    margin-top: auto; padding-top: 10px;
+    border-top: 1px dashed var(--line);
+    font-family: var(--num);
+  }
+  .dash-actions {
+    display: flex; gap: 6px; padding: 10px 14px;
+    background: var(--line-2);
+    border-top: 1px solid var(--line);
+  }
+  .dash-actions .btn { padding: 7px 10px; font-size: 12px; }
+  .dash-actions .btn-flex { flex: 1; }
+  .dash-empty {
+    text-align: center; padding: 60px 16px;
+    background: var(--surface);
+    border: 2px dashed var(--line); border-radius: var(--radius);
+  }
+  .dash-empty h3 { font-family: var(--display); margin: 0 0 6px 0; color: var(--ink-2); }
+
+  /* HTML 등록 모드 토글 */
+  .html-mode-seg {
+    display: flex; gap: 4px; background: var(--line-2);
+    padding: 4px; border-radius: var(--radius-sm);
+  }
+  .html-mode-seg button {
+    flex: 1; padding: 8px 10px; border: none; background: transparent;
+    border-radius: 8px; font-size: 13px; font-weight: 600;
+    color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .html-mode-seg button.active {
+    background: var(--surface); color: var(--accent);
+    box-shadow: var(--shadow-sm);
+  }
+  .file-hint {
+    font-size: 11px; color: var(--muted); margin-top: 6px;
+    font-family: var(--num);
+  }
+  .file-hint.info { color: var(--accent); }
+  .thumb-preview {
+    margin-top: 10px; max-width: 100%; max-height: 140px;
+    border-radius: var(--radius-sm); border: 1px solid var(--line);
+    display: block;
+  }
+
+  /* HTML 미리보기 모달 — 전체 화면 */
+  .modal-viewer { max-width: 1200px !important; height: 90vh; display: flex; flex-direction: column; padding: 0 !important; }
+  .modal-viewer .modal-head { padding: 14px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+  .modal-viewer iframe { flex: 1; width: 100%; border: none; background: var(--bg); }
 </style>
 </head>
 <body>
@@ -2838,6 +2978,7 @@
     <button class="tab" data-page="team">👥 팀별 보기</button>
     <button class="tab" data-page="detail">👤 멤버별 상세</button>
     <button class="tab" data-page="mindmap">🗺️ 마인드맵</button>
+    <button class="tab" data-page="dashboards">📊 대시보드</button>
     <button class="tab" data-page="manage">⚙️ 관리</button>
   </div>
 </div>
@@ -3120,6 +3261,37 @@
       <button class="btn danger" onclick="clearAll()">🗑 전체 초기화</button>
     </div>
 
+  </div>
+
+  <!-- ===== PAGE: 대시보드 ===== -->
+  <div class="page" id="page-dashboards">
+    <div class="section-title">
+      📊 팀 대시보드
+      <span class="count" id="dash-count">0건</span>
+    </div>
+    <p class="section-desc" style="color:var(--muted); font-size:0.9rem; margin:-8px 0 16px 0;">
+      팀원들이 각자 만든 대시보드(HTML, 앱 링크 등)를 공유하는 공간입니다. 누구든 등록하고 다른 사람도 바로 열어볼 수 있어요.
+    </p>
+
+    <div class="dash-toolbar">
+      <input type="search" id="dash-search" placeholder="🔍 제목 / 목적 / 태그로 검색...">
+      <select id="dash-filter-owner"><option value="">담당자 전체</option></select>
+      <select id="dash-filter-tag"><option value="">태그 전체</option></select>
+      <select id="dash-sort">
+        <option value="updated">최근 수정순</option>
+        <option value="created">등록순</option>
+        <option value="title">제목순</option>
+        <option value="owner">담당자순</option>
+      </select>
+      <button class="btn accent" onclick="openDashboardModal()">＋ 대시보드 추가</button>
+    </div>
+
+    <div id="dash-grid" class="dash-grid"></div>
+    <div id="dash-empty" class="dash-empty" style="display:none;">
+      <div style="font-size:2.5rem; opacity:0.4;">📊</div>
+      <h3 style="margin:8px 0 4px;">등록된 대시보드가 없어요</h3>
+      <p style="color:var(--muted); margin:0;">＋ 대시보드 추가 버튼을 눌러 첫 대시보드를 등록해보세요.</p>
+    </div>
   </div>
 
 </main>
@@ -3452,6 +3624,94 @@
   </div>
 </div>
 
+<!-- ===== 모달: 대시보드 등록/수정 ===== -->
+<div class="modal-backdrop" id="modal-dashboard" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-icon" style="background:var(--accent-soft); color:var(--accent);">📊</div>
+      <div>
+        <div class="modal-title" id="dash-modal-title">대시보드 등록</div>
+        <div class="modal-subtitle">팀원이 만든 대시보드를 등록하면 다른 사람도 바로 열어볼 수 있어요</div>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="dash-edit-id" value="">
+
+      <div class="modal-row cols-2">
+        <div class="modal-field">
+          <label class="modal-field-label">담당자 *</label>
+          <select id="dash-modal-owner"></select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-field-label">대시보드 제목 *</label>
+          <input type="text" id="dash-modal-title-input" placeholder="예: 운영실적 일일 모니터링">
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-field-label">대시보드 목적</label>
+        <textarea id="dash-modal-purpose" rows="3" placeholder="이 대시보드는 어떤 데이터를 보고, 누가 어떻게 활용하나요?" style="width:100%; padding:10px 12px; border:1px solid var(--line); border-radius:var(--radius-sm); font-family:inherit; font-size:13px; resize:vertical; background:var(--bg);"></textarea>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-field-label">태그 / 카테고리</label>
+        <input type="text" id="dash-modal-tags" placeholder="쉼표로 구분 (예: 운영, KPI, 일간)">
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-field-label">HTML 파일</label>
+        <div class="html-mode-seg" id="dash-html-mode">
+          <button type="button" data-mode="url" class="active" onclick="setDashHtmlMode('url')">🔗 URL 링크</button>
+          <button type="button" data-mode="file" onclick="setDashHtmlMode('file')">📎 파일 업로드</button>
+        </div>
+        <div style="margin-top:10px;" id="dash-html-url-wrap">
+          <input type="url" id="dash-modal-html-url" placeholder="https://... (GitHub Pages 등 호스팅된 주소)">
+        </div>
+        <div style="margin-top:10px; display:none;" id="dash-html-file-wrap">
+          <input type="file" id="dash-modal-html-file" accept=".html,.htm" onchange="onDashHtmlFileChange()">
+          <div class="file-hint">업로드한 HTML은 데이터에 저장되어 팀원 모두가 바로 열어볼 수 있습니다 (Firebase 연결 시 자동 동기화).</div>
+          <div class="file-hint info" id="dash-html-file-info"></div>
+        </div>
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-field-label">앱 링크 (선택)</label>
+        <input type="url" id="dash-modal-app-url" placeholder="https://... (Streamlit, Looker, Power BI 등)">
+      </div>
+
+      <div class="modal-field">
+        <label class="modal-field-label">썸네일 이미지 (선택)</label>
+        <input type="file" id="dash-modal-thumb" accept="image/*" onchange="onDashThumbChange()">
+        <div class="file-hint">대시보드 미리보기 이미지. 자동으로 480px 이하로 압축됩니다.</div>
+        <img class="thumb-preview" id="dash-thumb-preview" alt="" style="display:none;">
+      </div>
+    </div>
+    <div class="modal-foot" style="justify-content: space-between;">
+      <button class="modal-btn danger" id="dash-delete-btn" onclick="deleteDashboard()" style="display:none;">🗑 삭제</button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="modal-btn" onclick="closeModal()">취소</button>
+        <button class="modal-btn primary" onclick="saveDashboard()">저장</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 모달: 대시보드 HTML 미리보기 ===== -->
+<div class="modal-backdrop" id="modal-dashboard-viewer" onclick="if(event.target===this)closeModal()">
+  <div class="modal modal-viewer">
+    <div class="modal-head">
+      <div class="modal-head-icon" style="background:var(--accent-soft); color:var(--accent);">📊</div>
+      <div style="flex:1; min-width:0;">
+        <div class="modal-title" id="dash-viewer-title" style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">대시보드</div>
+        <div class="modal-subtitle" id="dash-viewer-owner">—</div>
+      </div>
+      <button class="modal-close-btn" onclick="closeDashboardViewer()">×</button>
+    </div>
+    <iframe id="dash-viewer-frame" sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-modals" src="about:blank"></iframe>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- ===== Firebase SDK (ES 모듈) — window.FB 전역 노출 ===== -->
@@ -3744,7 +4004,8 @@ function applyRemoteData(remote) {
     members: remote.members || [],
     routines: remote.routines || [],
     routineChecks: remote.routineChecks || [],
-    tasks: remote.tasks || []
+    tasks: remote.tasks || [],
+    dashboards: remote.dashboards || []
   };
   // 마이그레이션 적용 (구조 보강)
   migrateData();
@@ -3796,7 +4057,8 @@ let DATA = {
   members: [],         // {id, teamId, name, role, color, isAlba}
   routines: [],        // {id, memberId, title, frequency, weekdays, monthDay, active, assignee, createdAt}
   routineChecks: [],   // {id, routineId, date, doneAt}
-  tasks: []
+  tasks: [],
+  dashboards: []       // {id, owner, title, purpose, tags, htmlUrl, htmlData, appUrl, thumbnail, createdAt, updatedAt}
 };
 let UI = {
   detailMember: null,
@@ -3847,6 +4109,7 @@ function migrateData() {
   if (!DATA.tasks) DATA.tasks = [];
   if (!DATA.routines) DATA.routines = [];
   if (!DATA.members) DATA.members = [];
+  if (!DATA.dashboards) DATA.dashboards = [];
 
   // v5→v6: 팀이 여러 개면 "서비스운영본부" 단일 팀으로 통합
   // 첫 번째 팀을 본부로 개명하고 나머지 팀의 멤버를 모두 이동
@@ -4362,6 +4625,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     if (btn.dataset.page === 'detail') renderDetailPage();
     if (btn.dataset.page === 'manage') renderManagePage();
     if (btn.dataset.page === 'mindmap') renderMindmap();
+    if (btn.dataset.page === 'dashboards') renderDashboardPage();
   };
 });
 
@@ -7159,6 +7423,10 @@ function renderAll() {
   if (document.querySelector('.tab.active')?.dataset.page === 'mindmap') {
     renderMindmap();
   }
+  // 대시보드 탭이 열려있으면 갱신
+  if (document.querySelector('.tab.active')?.dataset.page === 'dashboards') {
+    renderDashboardPage();
+  }
 }
 
 function init() {
@@ -7225,6 +7493,395 @@ async function autoReconnectFirebase() {
     updateCloudStatusUI();
   }
 }
+
+// ===================================================================
+// 📊 대시보드 페이지 로직
+// ===================================================================
+
+// 파일 → DataURL
+function _fileToDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = reject;
+    r.readAsDataURL(file);
+  });
+}
+
+// 이미지 압축 (썸네일용, 최대폭 480px, JPEG 75%)
+function _compressImage(file, maxW = 480) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      const scale = Math.min(1, maxW / img.width);
+      const w = img.width * scale;
+      const h = img.height * scale;
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL('image/jpeg', 0.75));
+    };
+    img.onerror = (e) => { URL.revokeObjectURL(url); reject(e); };
+    img.src = url;
+  });
+}
+
+function _ownerName(ownerId) {
+  if (!DATA.members) return ownerId || '미지정';
+  const m = DATA.members.find(x => x.id === ownerId);
+  return m ? m.name : (ownerId || '미지정');
+}
+
+function _fmtDashDate(ts) {
+  if (!ts) return '—';
+  const d = new Date(ts);
+  return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;
+}
+
+// 담당자 셀렉트 옵션 채우기 (등록 모달 + 필터)
+function populateDashOwnerSelects() {
+  if (!DATA.dashboards) DATA.dashboards = [];
+  const realMembers = (DATA.members || []).filter(m => !m.isAlba);
+
+  // 등록 모달
+  const ownerSel = $('dash-modal-owner');
+  if (ownerSel) {
+    const cur = ownerSel.value;
+    ownerSel.innerHTML = '<option value="">선택...</option>' +
+      realMembers.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
+    ownerSel.value = cur;
+  }
+
+  // 필터
+  const filterSel = $('dash-filter-owner');
+  if (filterSel) {
+    const cur = filterSel.value;
+    filterSel.innerHTML = '<option value="">담당자 전체</option>' +
+      realMembers.map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
+    filterSel.value = cur;
+  }
+}
+
+// 대시보드 페이지 렌더링
+function renderDashboardPage() {
+  if (!DATA.dashboards) DATA.dashboards = [];
+  populateDashOwnerSelects();
+
+  const list = DATA.dashboards;
+  const grid = $('dash-grid');
+  const empty = $('dash-empty');
+  const countEl = $('dash-count');
+
+  const q = ($('dash-search')?.value || '').trim().toLowerCase();
+  const fOwner = $('dash-filter-owner')?.value || '';
+  const fTag = $('dash-filter-tag')?.value || '';
+  const sort = $('dash-sort')?.value || 'updated';
+
+  let items = list.slice();
+  if (q) items = items.filter(d =>
+    (d.title || '').toLowerCase().includes(q) ||
+    (d.purpose || '').toLowerCase().includes(q) ||
+    (d.tags || []).join(',').toLowerCase().includes(q)
+  );
+  if (fOwner) items = items.filter(d => d.owner === fOwner);
+  if (fTag) items = items.filter(d => (d.tags || []).includes(fTag));
+
+  items.sort((a, b) => {
+    if (sort === 'title') return (a.title || '').localeCompare(b.title || '', 'ko');
+    if (sort === 'owner') return _ownerName(a.owner).localeCompare(_ownerName(b.owner), 'ko');
+    if (sort === 'created') return (b.createdAt || 0) - (a.createdAt || 0);
+    return (b.updatedAt || 0) - (a.updatedAt || 0);
+  });
+
+  countEl.textContent = `${list.length}건`;
+
+  // 태그 필터 옵션 갱신
+  const allTags = [...new Set(list.flatMap(d => d.tags || []))].sort();
+  const tagSel = $('dash-filter-tag');
+  if (tagSel) {
+    const curTag = tagSel.value;
+    tagSel.innerHTML = '<option value="">태그 전체</option>' +
+      allTags.map(t => `<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join('');
+    tagSel.value = curTag;
+  }
+
+  if (list.length === 0) {
+    grid.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  if (items.length === 0) {
+    grid.innerHTML = `<div class="dash-empty" style="grid-column:1/-1;">
+      <h3 style="margin:0; color:var(--muted);">검색 결과가 없어요</h3>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = items.map(d => {
+    const thumb = d.thumbnail
+      ? `<img src="${escapeHtml(d.thumbnail)}" alt="">`
+      : `<span class="dash-thumb-fallback">${escapeHtml((d.title || '?').slice(0, 2))}</span>`;
+    const hasHtml = d.htmlUrl || d.htmlData;
+    const hasApp = d.appUrl;
+    const tagsHtml = (d.tags || []).length
+      ? `<div class="dash-tags">${d.tags.map(t => `<span class="dash-tag">#${escapeHtml(t)}</span>`).join('')}</div>`
+      : '';
+    const ownerColor = (DATA.members || []).find(m => m.id === d.owner)?.color || '';
+
+    return `
+      <div class="dash-card">
+        <div class="dash-thumb">${thumb}</div>
+        <div class="dash-body">
+          <h3 class="dash-title">${escapeHtml(d.title)}</h3>
+          <div class="dash-owner">
+            <span class="dash-owner-chip" ${ownerColor ? `style="background:${ownerColor}20; color:${ownerColor};"` : ''}>
+              👤 ${escapeHtml(_ownerName(d.owner))}
+            </span>
+          </div>
+          ${d.purpose ? `<p class="dash-purpose">${escapeHtml(d.purpose)}</p>` : ''}
+          ${tagsHtml}
+          <div class="dash-meta">
+            등록 ${_fmtDashDate(d.createdAt)} · 수정 ${_fmtDashDate(d.updatedAt)}
+          </div>
+        </div>
+        <div class="dash-actions">
+          ${hasHtml ? `<button class="btn accent btn-flex" onclick="openDashboardViewer('${d.id}')">📄 HTML 열기</button>` : ''}
+          ${hasApp ? `<a class="btn ghost btn-flex" href="${escapeHtml(d.appUrl)}" target="_blank" rel="noopener" style="text-decoration:none; text-align:center;">🔗 앱 열기</a>` : ''}
+          <button class="btn ghost" onclick="openDashboardModal('${d.id}')" title="수정">✏️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 등록/수정 모달 열기
+function openDashboardModal(id) {
+  if (!DATA.dashboards) DATA.dashboards = [];
+  populateDashOwnerSelects();
+
+  const item = id ? DATA.dashboards.find(d => d.id === id) : null;
+  $('dash-edit-id').value = id || '';
+  $('dash-modal-title').textContent = item ? '대시보드 수정' : '대시보드 등록';
+
+  $('dash-modal-owner').value = item?.owner || '';
+  $('dash-modal-title-input').value = item?.title || '';
+  $('dash-modal-purpose').value = item?.purpose || '';
+  $('dash-modal-tags').value = (item?.tags || []).join(', ');
+  $('dash-modal-html-url').value = item?.htmlUrl || '';
+  $('dash-modal-app-url').value = item?.appUrl || '';
+  $('dash-modal-html-file').value = '';
+  $('dash-modal-thumb').value = '';
+
+  // HTML 모드 결정
+  const mode = (item?.htmlData && !item?.htmlUrl) ? 'file' : 'url';
+  setDashHtmlMode(mode);
+
+  $('dash-html-file-info').textContent = item?.htmlData
+    ? `현재 저장된 파일이 있습니다 (${Math.round((item.htmlData.length * 0.75) / 1024)} KB)`
+    : '';
+
+  // 썸네일 미리보기
+  const tp = $('dash-thumb-preview');
+  if (item?.thumbnail) {
+    tp.src = item.thumbnail;
+    tp.style.display = 'block';
+  } else {
+    tp.src = '';
+    tp.style.display = 'none';
+  }
+
+  $('dash-delete-btn').style.display = item ? 'inline-block' : 'none';
+
+  closeModal();
+  $('modal-dashboard').classList.add('open');
+  UI.modalOpen = 'dashboard';
+}
+
+function setDashHtmlMode(mode) {
+  document.querySelectorAll('#dash-html-mode button').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+  $('dash-html-url-wrap').style.display = mode === 'url' ? 'block' : 'none';
+  $('dash-html-file-wrap').style.display = mode === 'file' ? 'block' : 'none';
+}
+
+function onDashHtmlFileChange() {
+  const f = $('dash-modal-html-file').files[0];
+  const info = $('dash-html-file-info');
+  info.textContent = f ? `선택됨: ${f.name} (${Math.round(f.size / 1024)} KB)` : '';
+}
+
+async function onDashThumbChange() {
+  const f = $('dash-modal-thumb').files[0];
+  if (!f) return;
+  try {
+    const dataUrl = await _compressImage(f);
+    const tp = $('dash-thumb-preview');
+    tp.src = dataUrl;
+    tp.style.display = 'block';
+    // 임시 보관 (저장 시 사용)
+    tp.dataset.pending = dataUrl;
+  } catch (e) {
+    toast('썸네일 처리 실패');
+  }
+}
+
+// 저장
+async function saveDashboard() {
+  if (!DATA.dashboards) DATA.dashboards = [];
+
+  const owner = $('dash-modal-owner').value;
+  const title = $('dash-modal-title-input').value.trim();
+  if (!owner) { toast('담당자를 선택해주세요'); return; }
+  if (!title) { toast('대시보드 제목을 입력해주세요'); return; }
+
+  const id = $('dash-edit-id').value;
+  const purpose = $('dash-modal-purpose').value.trim();
+  const tags = $('dash-modal-tags').value.split(',').map(s => s.trim()).filter(Boolean);
+  const htmlUrl = $('dash-modal-html-url').value.trim();
+  const appUrl = $('dash-modal-app-url').value.trim();
+  const htmlFile = $('dash-modal-html-file').files[0];
+  const pendingThumb = $('dash-thumb-preview').dataset.pending;
+
+  const activeMode = document.querySelector('#dash-html-mode button.active').dataset.mode;
+
+  // HTML 미입력 검증 (URL 모드 + URL 없음 + 기존 파일도 없음)
+  const existing = id ? DATA.dashboards.find(d => d.id === id) : null;
+  const hasExistingHtml = existing && (existing.htmlUrl || existing.htmlData);
+  if (activeMode === 'url' && !htmlUrl && !appUrl && !hasExistingHtml) {
+    toast('HTML URL 또는 앱 링크 중 하나는 입력해주세요');
+    return;
+  }
+  if (activeMode === 'file' && !htmlFile && !existing?.htmlData && !appUrl) {
+    toast('HTML 파일을 업로드하거나 앱 링크를 입력해주세요');
+    return;
+  }
+
+  const now = Date.now();
+  const item = existing || {
+    id: 'dash_' + Math.random().toString(36).slice(2, 10) + '_' + Date.now().toString(36),
+    createdAt: now
+  };
+
+  item.owner = owner;
+  item.title = title;
+  item.purpose = purpose;
+  item.tags = tags;
+  item.appUrl = appUrl;
+  item.updatedAt = now;
+
+  // HTML 모드 적용
+  if (activeMode === 'url') {
+    item.htmlUrl = htmlUrl;
+    delete item.htmlData;  // URL 모드 선택했으면 기존 파일 데이터 제거
+  } else {
+    item.htmlUrl = '';
+    if (htmlFile) {
+      try {
+        item.htmlData = await _fileToDataURL(htmlFile);
+      } catch (e) {
+        toast('HTML 파일을 읽지 못했습니다');
+        return;
+      }
+    }
+    // 파일 안 올렸으면 기존 htmlData 유지
+  }
+
+  // 썸네일
+  if (pendingThumb) {
+    item.thumbnail = pendingThumb;
+  }
+
+  if (!existing) DATA.dashboards.push(item);
+
+  save();  // localStorage + Firebase 디바운스 푸시
+  closeModal();
+  renderDashboardPage();
+  toast(existing ? '대시보드 수정 완료' : '대시보드 등록 완료');
+
+  // 미리보기 임시 보관 초기화
+  $('dash-thumb-preview').dataset.pending = '';
+}
+
+// 삭제
+function deleteDashboard() {
+  const id = $('dash-edit-id').value;
+  if (!id) return;
+  if (!confirm('이 대시보드를 삭제할까요?')) return;
+  const idx = DATA.dashboards.findIndex(d => d.id === id);
+  if (idx >= 0) {
+    DATA.dashboards.splice(idx, 1);
+    save();
+    closeModal();
+    renderDashboardPage();
+    toast('대시보드가 삭제되었습니다');
+  }
+}
+
+// HTML 미리보기 모달 열기
+function openDashboardViewer(id) {
+  const item = (DATA.dashboards || []).find(d => d.id === id);
+  if (!item) return;
+
+  $('dash-viewer-title').textContent = item.title;
+  $('dash-viewer-owner').textContent = `👤 ${_ownerName(item.owner)}`;
+
+  const frame = $('dash-viewer-frame');
+  if (item.htmlUrl) {
+    frame.src = item.htmlUrl;
+  } else if (item.htmlData) {
+    // data URL의 base64를 blob URL로 변환 (iframe sandbox 호환성)
+    try {
+      const parts = item.htmlData.split(',');
+      const base64 = parts[1] || parts[0];
+      const bytes = atob(base64);
+      const arr = new Uint8Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+      const blob = new Blob([arr], { type: 'text/html' });
+      // 이전 blob URL 해제
+      if (frame.dataset.blobUrl) URL.revokeObjectURL(frame.dataset.blobUrl);
+      const url = URL.createObjectURL(blob);
+      frame.dataset.blobUrl = url;
+      frame.src = url;
+    } catch (e) {
+      console.error('HTML 데이터 변환 실패', e);
+      toast('HTML을 열지 못했습니다');
+      return;
+    }
+  } else {
+    toast('HTML 파일이 없습니다');
+    return;
+  }
+
+  closeModal();
+  $('modal-dashboard-viewer').classList.add('open');
+  UI.modalOpen = 'dashboard-viewer';
+}
+
+function closeDashboardViewer() {
+  const frame = $('dash-viewer-frame');
+  if (frame.dataset.blobUrl) {
+    URL.revokeObjectURL(frame.dataset.blobUrl);
+    frame.dataset.blobUrl = '';
+  }
+  frame.src = 'about:blank';
+  closeModal();
+}
+
+// 검색/필터/정렬 이벤트 — DOM 준비된 뒤 바인딩
+function _bindDashboardFilters() {
+  ['dash-search', 'dash-filter-owner', 'dash-filter-tag', 'dash-sort'].forEach(id => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('input', renderDashboardPage);
+    el.addEventListener('change', renderDashboardPage);
+  });
+}
+_bindDashboardFilters();
 
 init();
 </script>
