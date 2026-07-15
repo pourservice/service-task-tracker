@@ -2977,6 +2977,44 @@
     font-size: 11px; color: var(--muted); text-align: center;
   }
   .dash-thumb-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+  /* ===== 매뉴얼 ===== */
+  .manual-owner-group { margin-bottom: 26px; }
+  .manual-owner-head { display: flex; align-items: center; gap: 10px; margin: 4px 0 12px; }
+  .manual-owner-head .avatar { width: 34px; height: 34px; font-size: 13px; }
+  .manual-owner-head .oname { font-size: 15.5px; font-weight: 800; letter-spacing: -0.01em; }
+  .manual-owner-head .orole { font-size: 11px; color: var(--muted); }
+  .manual-owner-head .ocount {
+    margin-left: auto; font-family: var(--num); font-size: 11px; color: var(--muted);
+    background: var(--line-2); padding: 3px 10px; border-radius: 99px; font-weight: 700;
+  }
+  .manual-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
+    gap: 12px; align-items: start;
+  }
+  .manual-card {
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm); padding: 14px 15px; display: flex; flex-direction: column; gap: 8px;
+    transition: transform .15s, box-shadow .15s; border-left: 3px solid var(--accent);
+  }
+  .manual-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+  .manual-card-top { display: flex; align-items: flex-start; gap: 10px; }
+  .manual-ico {
+    flex: 0 0 auto; width: 34px; height: 34px; border-radius: 9px; background: var(--accent-soft);
+    display: flex; align-items: center; justify-content: center; font-size: 17px;
+  }
+  .manual-head-col { flex: 1 1 auto; min-width: 0; }
+  .manual-title { font-size: 14px; font-weight: 800; letter-spacing: -0.01em; line-height: 1.3; }
+  .manual-cat { font-size: 10.5px; font-weight: 800; color: var(--accent); margin-top: 2px; letter-spacing: .04em; }
+  .manual-desc { font-size: 12px; color: var(--ink-2); line-height: 1.5; }
+  .manual-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .manual-tag { background: var(--line-2); color: var(--muted); font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+  .manual-actions { display: flex; gap: 6px; align-items: center; margin-top: 2px; flex-wrap: wrap; }
+  .manual-actions .spacer { margin-left: auto; }
+  .manual-view-content {
+    white-space: pre-wrap; word-break: break-word; font-size: 13.5px; line-height: 1.7; color: var(--ink);
+    background: var(--bg); border: 1px solid var(--line-2); border-radius: 10px; padding: 16px; max-height: 60vh; overflow: auto;
+  }
 </style>
 </head>
 <body>
@@ -3093,6 +3131,7 @@
     <button class="tab active" data-page="today">📅 오늘</button>
     <button class="tab" data-page="team">👥 팀별 보기</button>
     <button class="tab" data-page="automation">🚀 자동화</button>
+    <button class="tab" data-page="manuals">📖 매뉴얼</button>
     <button class="tab" data-page="detail">👤 멤버별 상세</button>
     <button class="tab" data-page="kpi">🎯 KPI 체계</button>
     <button class="tab" data-page="mindmap">🗺️ 마인드맵</button>
@@ -3165,6 +3204,17 @@
     <div class="member-pick" id="team-pick"></div>
 
     <div class="team-grid" id="team-grid"></div>
+  </div>
+
+  <!-- ===== PAGE: 매뉴얼 ===== -->
+  <div class="page" id="page-manuals">
+    <div class="section-title">📖 담당자별 업무 매뉴얼 <span class="count" id="manual-count">0</span></div>
+    <p class="section-sub">담당자마다 다른 업무 매뉴얼을 한곳에 모아 봅니다. 담당자별로 묶여 있으며, 카드의 <b>열기</b>로 링크된 문서를, <b>내용 보기</b>로 작성된 매뉴얼 본문을 확인할 수 있습니다.</p>
+    <div class="dash-toolbar">
+      <div class="dash-filter" id="manual-filter"></div>
+      <button class="btn accent btn-sm" onclick="openManualModal()" style="margin-left:auto;">＋ 매뉴얼 추가</button>
+    </div>
+    <div id="manual-root"></div>
   </div>
 
   <!-- ===== PAGE: 자동화 대시보드 ===== -->
@@ -3411,6 +3461,78 @@
 <button class="fab-add" onclick="openAddMenu()" title="새 업무 추가 (Ctrl+N)">＋</button>
 
 <!-- ===== 모달: 추가 메뉴 (루틴 vs 프로젝트 선택) ===== -->
+<!-- 매뉴얼 추가/수정 모달 -->
+<div class="modal-backdrop" id="modal-manual" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-icon">📖</div>
+      <div>
+        <div class="modal-title" id="manual-modal-title">매뉴얼 추가</div>
+        <div class="modal-subtitle">담당자별 업무 매뉴얼을 등록·공유하세요</div>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="manual-edit-id">
+      <div class="modal-field">
+        <label class="modal-field-label">제목 *</label>
+        <input type="text" id="manual-f-title" placeholder="예: 협약서 발행 업무 매뉴얼">
+      </div>
+      <div class="modal-row cols-2">
+        <div class="modal-field">
+          <label class="modal-field-label">담당자</label>
+          <select id="manual-f-owner"></select>
+        </div>
+        <div class="modal-field">
+          <label class="modal-field-label">분류 (선택)</label>
+          <input type="text" id="manual-f-category" placeholder="예: 영업지원 / 현장관리">
+        </div>
+      </div>
+      <div class="modal-field">
+        <label class="modal-field-label">한 줄 설명</label>
+        <input type="text" id="manual-f-desc" placeholder="이 매뉴얼의 요약">
+      </div>
+      <div class="modal-field">
+        <label class="modal-field-label">문서 링크 (Google 문서·Notion·PDF·HTML 등)</label>
+        <input type="text" id="manual-f-url" placeholder="https://...">
+      </div>
+      <div class="modal-field">
+        <label class="modal-field-label">매뉴얼 본문 (선택 — 링크 없이 직접 작성)</label>
+        <textarea id="manual-f-content" rows="6" placeholder="단계별 절차, 주의사항 등을 직접 작성할 수 있습니다."></textarea>
+      </div>
+      <div class="modal-field">
+        <label class="modal-field-label">태그 (쉼표로 구분)</label>
+        <input type="text" id="manual-f-tags" placeholder="예: 협약, 발행, 대외비">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn" onclick="closeModal()">취소</button>
+      <button class="modal-btn primary" onclick="saveManual()">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 매뉴얼 본문 보기 모달 -->
+<div class="modal-backdrop" id="modal-manual-view" onclick="if(event.target===this)closeModal()">
+  <div class="modal" style="max-width:720px;">
+    <div class="modal-head">
+      <div class="modal-head-icon">📖</div>
+      <div>
+        <div class="modal-title" id="manual-view-title">매뉴얼</div>
+        <div class="modal-subtitle" id="manual-view-sub"></div>
+      </div>
+      <button class="modal-close-btn" onclick="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div id="manual-view-content" class="manual-view-content"></div>
+    </div>
+    <div class="modal-foot">
+      <button class="modal-btn" onclick="closeModal()">닫기</button>
+      <button class="modal-btn primary" id="manual-view-edit">수정</button>
+    </div>
+  </div>
+</div>
+
 <!-- 대시보드 추가/수정 모달 -->
 <div class="modal-backdrop" id="modal-dash" onclick="if(event.target===this)closeModal()">
   <div class="modal">
@@ -4078,15 +4200,6 @@
     },
     {
       "active": true,
-      "assignee": "member",
-      "createdAt": "2026-05-15",
-      "frequency": "daily",
-      "id": "id_iwbqhxev",
-      "memberId": "id_3mtl8aqg",
-      "title": "협약서 발행 및 대시보드 현장등록"
-    },
-    {
-      "active": true,
       "assignee": "alba",
       "createdAt": "2026-05-15",
       "frequency": "daily",
@@ -4254,15 +4367,6 @@
     {
       "active": true,
       "assignee": "member",
-      "createdAt": "2026-06-28",
-      "frequency": "daily",
-      "id": "id_0gmurvcy",
-      "memberId": "id_3mtl8aqg",
-      "title": "매탄 임광아파트-코지건설 컨설팅계약서"
-    },
-    {
-      "active": true,
-      "assignee": "member",
       "createdAt": "2026-06-29",
       "frequency": "daily",
       "id": "id_zrjsnj2i",
@@ -4385,6 +4489,15 @@
       "id": "id_2azue4fx",
       "memberId": "id_b794mce0",
       "title": "대금관리앱 현장 전체적 준공일 수정"
+    },
+    {
+      "active": true,
+      "assignee": "member",
+      "createdAt": "2026-07-14",
+      "frequency": "daily",
+      "id": "id_lu85dsts",
+      "memberId": "id_3mtl8aqg",
+      "title": "삼성동롯데아파트_국제특수건설 변경계약서(하자기간)"
     }
   ],
   "routineChecks": [
@@ -4465,12 +4578,6 @@
       "doneAt": "2026-05-15T08:33:42.470Z",
       "id": "id_wtxcdpwz",
       "routineId": "id_5yrk5ilu"
-    },
-    {
-      "date": "2026-05-15",
-      "doneAt": "2026-05-15T08:33:46.293Z",
-      "id": "id_68kxt2cn",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-05-18",
@@ -4623,12 +4730,6 @@
       "routineId": "id_kg2v0azc"
     },
     {
-      "date": "2026-05-21",
-      "doneAt": "2026-05-21T23:51:56.064Z",
-      "id": "id_bg8ji7kr",
-      "routineId": "id_iwbqhxev"
-    },
-    {
       "date": "2026-05-22",
       "doneAt": "2026-05-22T01:58:18.918Z",
       "id": "id_o14j97nk",
@@ -4744,12 +4845,6 @@
     },
     {
       "date": "2026-05-27",
-      "doneAt": "2026-05-27T05:40:53.475Z",
-      "id": "id_nhluh4zg",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-05-27",
       "doneAt": "2026-05-27T05:40:57.142Z",
       "id": "id_ntp7v6cz",
       "routineId": "id_kg2v0azc"
@@ -4840,12 +4935,6 @@
     },
     {
       "date": "2026-05-29",
-      "doneAt": "2026-05-29T05:48:35.285Z",
-      "id": "id_i5t2xjbu",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-05-29",
       "doneAt": "2026-05-29T05:50:13.755Z",
       "id": "id_tzpub143",
       "routineId": "id_5yrk5ilu"
@@ -4900,12 +4989,6 @@
     },
     {
       "date": "2026-06-01",
-      "doneAt": "2026-06-01T06:10:45.547Z",
-      "id": "id_aix961ed",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-06-01",
       "doneAt": "2026-06-01T06:10:47.216Z",
       "id": "id_3t81gkhy",
       "routineId": "id_kg2v0azc"
@@ -4936,12 +5019,6 @@
     },
     {
       "date": "2026-06-02",
-      "doneAt": "2026-06-02T05:19:56.602Z",
-      "id": "id_8de3xq9n",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-06-02",
       "doneAt": "2026-06-02T05:19:57.324Z",
       "id": "id_34hzk2yw",
       "routineId": "id_kg2v0azc"
@@ -4969,12 +5046,6 @@
       "doneAt": "2026-06-04T00:26:43.928Z",
       "id": "id_ojnk50sr",
       "routineId": "id_96jageeu"
-    },
-    {
-      "date": "2026-06-04",
-      "doneAt": "2026-06-04T06:56:35.367Z",
-      "id": "id_euxng0vo",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-06-04",
@@ -5029,12 +5100,6 @@
       "doneAt": "2026-06-05T06:17:23.139Z",
       "id": "id_vgcvz30o",
       "routineId": "id_8f2py0r9"
-    },
-    {
-      "date": "2026-06-05",
-      "doneAt": "2026-06-05T06:37:57.314Z",
-      "id": "id_op06h37w",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-06-05",
@@ -5146,12 +5211,6 @@
     },
     {
       "date": "2026-06-08",
-      "doneAt": "2026-06-08T05:18:20.600Z",
-      "id": "id_ej0y931g",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-06-08",
       "doneAt": "2026-06-08T06:08:26.361Z",
       "id": "id_o0euqg9w",
       "routineId": "id_96jageeu"
@@ -5161,12 +5220,6 @@
       "doneAt": "2026-06-08T08:53:49.935Z",
       "id": "id_6c3f1568",
       "routineId": "id_5yrk5ilu"
-    },
-    {
-      "date": "2026-06-09",
-      "doneAt": "2026-06-09T05:50:01.546Z",
-      "id": "id_t1x96xst",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-06-09",
@@ -5314,12 +5367,6 @@
     },
     {
       "date": "2026-06-17",
-      "doneAt": "2026-06-17T05:40:21.222Z",
-      "id": "id_z6ss08p1",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-06-17",
       "doneAt": "2026-06-17T05:40:22.946Z",
       "id": "id_h00q9y5r",
       "routineId": "id_5yrk5ilu"
@@ -5410,12 +5457,6 @@
     },
     {
       "date": "2026-06-18",
-      "doneAt": "2026-06-18T06:40:56.129Z",
-      "id": "id_uozo5952",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-06-18",
       "doneAt": "2026-06-18T06:40:56.800Z",
       "id": "id_zuxqffka",
       "routineId": "id_kg2v0azc"
@@ -5461,12 +5502,6 @@
       "doneAt": "2026-06-19T06:03:37.731Z",
       "id": "id_484ign1x",
       "routineId": "id_kg2v0azc"
-    },
-    {
-      "date": "2026-06-19",
-      "doneAt": "2026-06-19T06:03:39.911Z",
-      "id": "id_2yqv5prr",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-06-19",
@@ -5521,12 +5556,6 @@
       "doneAt": "2026-06-22T01:16:36.292Z",
       "id": "id_oi73am2g",
       "routineId": "id_2y8ui8hi"
-    },
-    {
-      "date": "2026-06-22",
-      "doneAt": "2026-06-22T05:41:45.426Z",
-      "id": "id_3ywkfqq2",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-06-22",
@@ -5673,12 +5702,6 @@
       "routineId": "id_5yrk5ilu"
     },
     {
-      "date": "2026-06-25",
-      "doneAt": "2026-06-25T08:40:59.525Z",
-      "id": "id_g7znlbxg",
-      "routineId": "id_iwbqhxev"
-    },
-    {
       "date": "2026-06-26",
       "doneAt": "2026-06-26T04:02:22.059Z",
       "id": "id_wki3jlnt",
@@ -5722,12 +5745,6 @@
     },
     {
       "date": "2026-06-26",
-      "doneAt": "2026-06-26T08:40:56.405Z",
-      "id": "id_9go6u8g9",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-06-26",
       "doneAt": "2026-06-26T08:40:57.153Z",
       "id": "id_qc3nsms8",
       "routineId": "id_kg2v0azc"
@@ -5749,12 +5766,6 @@
       "doneAt": "2026-06-29T00:49:08.024Z",
       "id": "id_rjnodw5i",
       "routineId": "id_0k34f6y8"
-    },
-    {
-      "date": "2026-06-29",
-      "doneAt": "2026-06-29T09:00:19.069Z",
-      "id": "id_4uwt5l82",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-06-29",
@@ -5793,12 +5804,6 @@
       "routineId": "id_0k34f6y8"
     },
     {
-      "date": "2026-06-30",
-      "doneAt": "2026-06-30T06:35:38.388Z",
-      "id": "id_0qztlus4",
-      "routineId": "id_iwbqhxev"
-    },
-    {
       "date": "2026-07-01",
       "doneAt": "2026-07-01T02:44:42.728Z",
       "id": "id_k00qgklp",
@@ -5835,12 +5840,6 @@
       "routineId": "id_b10nfbl7"
     },
     {
-      "date": "2026-07-01",
-      "doneAt": "2026-07-01T07:34:38.969Z",
-      "id": "id_8cwcb0ky",
-      "routineId": "id_iwbqhxev"
-    },
-    {
       "date": "2026-07-03",
       "doneAt": "2026-07-03T01:34:53.995Z",
       "id": "id_ugfk7fzm",
@@ -5851,12 +5850,6 @@
       "doneAt": "2026-07-03T05:46:12.251Z",
       "id": "id_7qcdlqjs",
       "routineId": "id_l5a7c45p"
-    },
-    {
-      "date": "2026-07-03",
-      "doneAt": "2026-07-03T07:08:33.380Z",
-      "id": "id_y7o3el1o",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-07-03",
@@ -5980,12 +5973,6 @@
     },
     {
       "date": "2026-07-07",
-      "doneAt": "2026-07-07T08:57:12.278Z",
-      "id": "id_eszqgnge",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-07-07",
       "doneAt": "2026-07-07T08:57:12.733Z",
       "id": "id_6w5crnmt",
       "routineId": "id_kg2v0azc"
@@ -6015,12 +6002,6 @@
       "routineId": "id_kg2v0azc"
     },
     {
-      "date": "2026-07-08",
-      "doneAt": "2026-07-08T04:17:52.824Z",
-      "id": "id_gmnzxhop",
-      "routineId": "id_iwbqhxev"
-    },
-    {
       "date": "2026-07-10",
       "doneAt": "2026-07-10T00:31:43.066Z",
       "id": "id_umabtbjb",
@@ -6031,12 +6012,6 @@
       "doneAt": "2026-07-10T05:05:29.724Z",
       "id": "id_13aywqpg",
       "routineId": "id_kg2v0azc"
-    },
-    {
-      "date": "2026-07-10",
-      "doneAt": "2026-07-10T05:05:30.849Z",
-      "id": "id_agpotu53",
-      "routineId": "id_iwbqhxev"
     },
     {
       "date": "2026-07-10",
@@ -6076,27 +6051,21 @@
     },
     {
       "date": "2026-07-13",
-      "doneAt": "2026-07-13T08:47:30.904Z",
-      "id": "id_vqi6cv79",
-      "routineId": "id_iwbqhxev"
-    },
-    {
-      "date": "2026-07-13",
       "doneAt": "2026-07-13T08:47:32.792Z",
       "id": "id_1zun4j7w",
       "routineId": "id_5yrk5ilu"
     },
     {
       "date": "2026-07-13",
-      "doneAt": "2026-07-13T08:47:55.917Z",
-      "id": "id_cculn13h",
-      "routineId": "id_0gmurvcy"
-    },
-    {
-      "date": "2026-07-13",
       "doneAt": "2026-07-13T08:48:10.268Z",
       "id": "id_1hflpudi",
       "routineId": "id_b1l893zv"
+    },
+    {
+      "date": "2026-07-14",
+      "doneAt": "2026-07-14T04:10:41.117Z",
+      "id": "id_pk9nfkg2",
+      "routineId": "id_kg2v0azc"
     }
   ],
   "tasks": [
@@ -9725,6 +9694,7 @@ function applyRemoteData(remote) {
     routineChecks: remote.routineChecks || [],
     tasks: remote.tasks || [],
     dashboards: remote.dashboards || (DATA && DATA.dashboards) || [],
+    manuals: remote.manuals || (DATA && DATA.manuals) || [],
     kpiPlan: chosenPlan,
     kpiHeadlineRev: remote.kpiHeadlineRev || (DATA && DATA.kpiHeadlineRev) || 0
   };
@@ -9899,6 +9869,7 @@ function buildKpiPlan() {
 
 function migrateData() {
   if (!Array.isArray(DATA.dashboards)) DATA.dashboards = [];
+  if (!Array.isArray(DATA.manuals)) DATA.manuals = [];
   if (!DATA.teams) DATA.teams = [];
   if (!DATA.routineChecks) DATA.routineChecks = [];
   if (!DATA.tasks) DATA.tasks = [];
@@ -10481,6 +10452,7 @@ document.querySelectorAll('.tab').forEach(btn => {
     if (btn.dataset.page === 'mindmap') renderMindmap();
     if (btn.dataset.page === 'kpi') renderKpiPage();
     if (btn.dataset.page === 'automation') renderAutomationPage();
+    if (btn.dataset.page === 'manuals') renderManualsPage();
   };
 });
 
@@ -13281,6 +13253,149 @@ function addDays(n) {
 }
 
 // ============================================================
+// 매뉴얼 페이지 (담당자별)
+// ============================================================
+function manualMember(id) { return DATA.members.find(m => m.id === id) || null; }
+function manualsSorted() { return [...(DATA.manuals || [])].sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0)); }
+
+function renderManualsPage() {
+  const root = $('manual-root'); if (!root) return;
+  const all = manualsSorted();
+  if ($('manual-count')) $('manual-count').textContent = all.length;
+  if (!UI.manualFilter) UI.manualFilter = 'all';
+
+  const ownerIds = [];
+  DATA.members.filter(m => !m.isAlba).forEach(m => { if (all.some(x => x.owner === m.id)) ownerIds.push(m.id); });
+  const noneList = all.filter(x => !x.owner || !manualMember(x.owner));
+  const filterEl = $('manual-filter');
+  if (filterEl) {
+    filterEl.innerHTML = `<button class="chip ${UI.manualFilter === 'all' ? 'on' : ''}" onclick="setManualFilter('all')">전체 ${all.length}</button>` +
+      ownerIds.map(oid => { const m = manualMember(oid); const cnt = all.filter(x => x.owner === oid).length;
+        return `<button class="chip ${UI.manualFilter === oid ? 'on' : ''}" onclick="setManualFilter('${oid}')">${escapeHtml(m.name)} ${cnt}</button>`;
+      }).join('') +
+      (noneList.length ? `<button class="chip ${UI.manualFilter === 'none' ? 'on' : ''}" onclick="setManualFilter('none')">미지정 ${noneList.length}</button>` : '');
+  }
+
+  if (!all.length) {
+    root.innerHTML = `<div class="dash-empty">등록된 매뉴얼이 없습니다.<br>우측 상단 <b>＋ 매뉴얼 추가</b>로 담당자별 업무 매뉴얼을 올려보세요.</div>`;
+    return;
+  }
+
+  let groups;
+  if (UI.manualFilter === 'all') {
+    groups = ownerIds.map(oid => ({ oid, list: all.filter(x => x.owner === oid) }));
+    if (noneList.length) groups.push({ oid: 'none', list: noneList });
+  } else if (UI.manualFilter === 'none') {
+    groups = [{ oid: 'none', list: noneList }];
+  } else {
+    groups = [{ oid: UI.manualFilter, list: all.filter(x => x.owner === UI.manualFilter) }];
+  }
+
+  root.innerHTML = groups.filter(g => g.list.length).map(g => {
+    const m = g.oid === 'none' ? null : manualMember(g.oid);
+    const name = m ? m.name : '미지정';
+    const color = m ? (m.color || '#1B5E6E') : '#9AA5A0';
+    const role = m ? (m.role || '매니저') : '담당자 미지정';
+    return `
+      <div class="manual-owner-group">
+        <div class="manual-owner-head">
+          <div class="avatar" style="background:${color};">${escapeHtml(initials(name))}</div>
+          <div><div class="oname">${escapeHtml(name)}</div><div class="orole">${escapeHtml(role)}</div></div>
+          <span class="ocount">매뉴얼 ${g.list.length}</span>
+        </div>
+        <div class="manual-grid">${g.list.map(renderManualCard).join('')}</div>
+      </div>`;
+  }).join('');
+}
+
+function renderManualCard(x) {
+  const tags = Array.isArray(x.tags) ? x.tags : [];
+  const hasUrl = !!(x.url && x.url.trim());
+  const hasContent = !!(x.content && x.content.trim());
+  const acts = [];
+  if (hasUrl) acts.push(`<a class="dash-link app" href="${escapeHtml(x.url)}" target="_blank" rel="noopener">▶ 열기</a>`);
+  if (hasContent) acts.push(`<button class="dash-link" onclick="openManualView('${x.id}')">📄 내용 보기</button>`);
+  return `
+    <div class="manual-card">
+      <div class="manual-card-top">
+        <div class="manual-ico">📄</div>
+        <div class="manual-head-col">
+          <div class="manual-title">${escapeHtml(x.title || '(제목 없음)')}</div>
+          ${x.category ? `<div class="manual-cat">${escapeHtml(x.category)}</div>` : ''}
+        </div>
+      </div>
+      ${x.description ? `<div class="manual-desc">${escapeHtml(x.description)}</div>` : ''}
+      ${tags.length ? `<div class="manual-tags">${tags.slice(0, 4).map(t => `<span class="manual-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
+      <div class="manual-actions">
+        ${acts.join('')}
+        <span class="spacer"></span>
+        <button class="dash-icon-btn" title="수정" onclick="openManualModal('${x.id}')">✏️</button>
+        <button class="dash-icon-btn del" title="삭제" onclick="deleteManual('${x.id}')">🗑</button>
+      </div>
+    </div>`;
+}
+
+function setManualFilter(v) { UI.manualFilter = v; renderManualsPage(); }
+
+function openManualView(id) {
+  const x = (DATA.manuals || []).find(m => m.id === id); if (!x) return;
+  closeModal();
+  $('manual-view-title').textContent = x.title || '매뉴얼';
+  const m = manualMember(x.owner);
+  $('manual-view-sub').textContent = [m ? m.name : '', x.category || ''].filter(Boolean).join(' · ');
+  $('manual-view-content').textContent = x.content || '';
+  $('manual-view-edit').onclick = () => openManualModal(id);
+  $('modal-manual-view').classList.add('open');
+  UI.modalOpen = 'manual-view';
+}
+
+function openManualModal(id) {
+  closeModal();
+  const sel = $('manual-f-owner');
+  sel.innerHTML = `<option value="">— 담당자 없음 —</option>` + DATA.members.filter(m => !m.isAlba).map(m => `<option value="${m.id}">${escapeHtml(m.name)}</option>`).join('');
+  const x = id ? (DATA.manuals || []).find(v => v.id === id) : null;
+  $('manual-edit-id').value = x ? x.id : '';
+  $('manual-modal-title').textContent = x ? '매뉴얼 수정' : '매뉴얼 추가';
+  $('manual-f-title').value = x ? (x.title || '') : '';
+  $('manual-f-owner').value = x ? (x.owner || '') : '';
+  $('manual-f-category').value = x ? (x.category || '') : '';
+  $('manual-f-desc').value = x ? (x.description || '') : '';
+  $('manual-f-url').value = x ? (x.url || '') : '';
+  $('manual-f-content').value = x ? (x.content || '') : '';
+  $('manual-f-tags').value = x && Array.isArray(x.tags) ? x.tags.join(', ') : '';
+  $('modal-manual').classList.add('open');
+  UI.modalOpen = 'manual';
+}
+
+function saveManual() {
+  const title = $('manual-f-title').value.trim();
+  if (!title) return toast('⚠️ 제목을 입력해주세요');
+  const tags = $('manual-f-tags').value.split(',').map(s => s.trim()).filter(Boolean);
+  const now = Date.now(); const id = $('manual-edit-id').value;
+  const payload = {
+    title, owner: $('manual-f-owner').value || null,
+    category: $('manual-f-category').value.trim(),
+    description: $('manual-f-desc').value.trim(),
+    url: $('manual-f-url').value.trim(),
+    content: $('manual-f-content').value,
+    tags: tags.length ? tags : null
+  };
+  if (!Array.isArray(DATA.manuals)) DATA.manuals = [];
+  if (id) { const x = DATA.manuals.find(v => v.id === id); if (x) { Object.assign(x, payload); x.updatedAt = now; } }
+  else { DATA.manuals.push(Object.assign({ id: 'man_' + uid().slice(3), createdAt: now, updatedAt: now }, payload)); }
+  try { save(); } catch (e) {}
+  closeModal(); renderManualsPage();
+  toast(id ? '✅ 수정되었습니다' : '✅ 매뉴얼이 추가되었습니다');
+}
+function deleteManual(id) {
+  const x = (DATA.manuals || []).find(v => v.id === id); if (!x) return;
+  if (!confirm(`"${x.title}" 매뉴얼을 삭제할까요?`)) return;
+  DATA.manuals = DATA.manuals.filter(v => v.id !== id);
+  try { save(); } catch (e) {}
+  renderManualsPage();
+}
+
+// ============================================================
 // 자동화 대시보드 페이지
 // ============================================================
 function dashMember(ownerId) { return DATA.members.find(m => m.id === ownerId) || null; }
@@ -13732,6 +13847,7 @@ function renderAll() {
   renderManagePage();
   renderKpiPage();
   renderAutomationPage();
+  renderManualsPage();
   // mindmap은 탭 진입 시에만 (비싸므로)
   if (document.querySelector('.tab.active')?.dataset.page === 'mindmap') {
     renderMindmap();
