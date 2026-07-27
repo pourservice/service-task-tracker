@@ -13863,6 +13863,9 @@ function renderAll() {
 }
 
 function init() {
+  // 배포 버전 확인용 마커 — 콘솔(F12)에 이 문구가 보이면 '열기 버튼 수정본'이 적용된 것입니다.
+  console.info('%c✅ 매뉴얼/대시보드 열기 버튼 수정본 적용됨 (build: open-fix-2026-07-27)', 'color:#1B5E6E;font-weight:bold;');
+  window.__BUILD__ = 'open-fix-2026-07-27';
   load();
   updateFreqOptions();
   renderAll();
