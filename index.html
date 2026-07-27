@@ -10048,6 +10048,14 @@ function migrateData() {
 function escapeHtml(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
 }
+// 링크 URL 정규화: http/https 등 스킴이 없으면 https:// 를 붙여 상대경로로 열리는 문제 방지
+function normalizeUrl(u) {
+  const s = String(u || '').trim();
+  if (!s) return '';
+  // 이미 스킴이 있거나(mailto:, tel:, https: 등), 앵커/절대경로면 그대로 사용
+  if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s) || s.startsWith('#') || s.startsWith('/')) return s;
+  return 'https://' + s;
+}
 function initials(name) {
   return (name || '?').slice(0, 1);
 }
@@ -13313,7 +13321,7 @@ function renderManualCard(x) {
   const hasUrl = !!(x.url && x.url.trim());
   const hasContent = !!(x.content && x.content.trim());
   const acts = [];
-  if (hasUrl) acts.push(`<a class="dash-link app" href="${escapeHtml(x.url)}" target="_blank" rel="noopener">▶ 열기</a>`);
+  if (hasUrl) acts.push(`<a class="dash-link app" href="${escapeHtml(normalizeUrl(x.url))}" target="_blank" rel="noopener">▶ 열기</a>`);
   if (hasContent) acts.push(`<button class="dash-link" onclick="openManualView('${x.id}')">📄 내용 보기</button>`);
   return `
     <div class="manual-card">
@@ -13428,7 +13436,7 @@ function renderDashCard(d) {
   const m = dashMember(d.owner);
   const ownerName = m ? m.name : '미지정';
   const ownerColor = m ? (m.color || '#1B5E6E') : '#9AA5A0';
-  const openUrl = d.appUrl || d.htmlUrl || '';
+  const openUrl = normalizeUrl(d.appUrl || d.htmlUrl || '');
   const tags = Array.isArray(d.tags) ? d.tags : [];
   const thumb = d.thumbnail
     ? `<img src="${escapeHtml(d.thumbnail)}" alt="">`
@@ -13436,8 +13444,8 @@ function renderDashCard(d) {
   const tagHtml = tags.length ? `<div class="dash-tags">${tags.slice(0, 3).map(t => `<span class="dash-tag">${escapeHtml(t)}</span>`).join('')}</div>` : '';
   const openAttr = openUrl ? `onclick="openDashLink('${escapeHtml(encodeURI(openUrl))}')" style="cursor:pointer;"` : 'style="cursor:default;"';
   const links = [];
-  if (d.appUrl) links.push(`<a class="dash-link app" href="${escapeHtml(d.appUrl)}" target="_blank" rel="noopener">▶ 앱 열기</a>`);
-  if (d.htmlUrl && d.htmlUrl !== d.appUrl) links.push(`<a class="dash-link" href="${escapeHtml(d.htmlUrl)}" target="_blank" rel="noopener">&lt;/&gt; HTML</a>`);
+  if (d.appUrl) links.push(`<a class="dash-link app" href="${escapeHtml(normalizeUrl(d.appUrl))}" target="_blank" rel="noopener">▶ 앱 열기</a>`);
+  if (d.htmlUrl && d.htmlUrl !== d.appUrl) links.push(`<a class="dash-link" href="${escapeHtml(normalizeUrl(d.htmlUrl))}" target="_blank" rel="noopener">&lt;/&gt; HTML</a>`);
   return `
     <div class="dash-card">
       <div class="dash-thumb" ${openAttr}>
