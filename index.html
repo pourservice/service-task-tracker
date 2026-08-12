@@ -2989,9 +2989,11 @@
     background: var(--line-2); padding: 3px 10px; border-radius: 99px; font-weight: 700;
   }
   .manual-grid {
-    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr));
-    gap: 12px; align-items: start;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
+    gap: 14px; align-items: start;
   }
+  .manual-owner { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); font-weight: 600; }
+  .manual-owner .avatar { width: 22px; height: 22px; font-size: 10px; }
   .manual-card {
     background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-sm);
     box-shadow: var(--shadow-sm); padding: 14px 15px; display: flex; flex-direction: column; gap: 8px;
@@ -3209,7 +3211,7 @@
   <!-- ===== PAGE: 매뉴얼 ===== -->
   <div class="page" id="page-manuals">
     <div class="section-title">📖 담당자별 업무 매뉴얼 <span class="count" id="manual-count">0</span></div>
-    <p class="section-sub">담당자마다 다른 업무 매뉴얼을 한곳에 모아 봅니다. 담당자별로 묶여 있으며, 카드의 <b>열기</b>로 링크된 문서를, <b>내용 보기</b>로 작성된 매뉴얼 본문을 확인할 수 있습니다.</p>
+    <p class="section-sub">담당자마다 다른 업무 매뉴얼을 한곳에 모아 봅니다. 위쪽 <b>담당자 필터</b>로 골라 볼 수 있고, 카드의 <b>열기</b>로 링크된 문서를, <b>내용 보기</b>로 작성된 매뉴얼 본문을 확인할 수 있습니다.</p>
     <div class="dash-toolbar">
       <div class="dash-filter" id="manual-filter"></div>
       <button class="btn accent btn-sm" onclick="openManualModal()" style="margin-left:auto;">＋ 매뉴얼 추가</button>
@@ -13289,37 +13291,26 @@ function renderManualsPage() {
     return;
   }
 
-  let groups;
-  if (UI.manualFilter === 'all') {
-    groups = ownerIds.map(oid => ({ oid, list: all.filter(x => x.owner === oid) }));
-    if (noneList.length) groups.push({ oid: 'none', list: noneList });
-  } else if (UI.manualFilter === 'none') {
-    groups = [{ oid: 'none', list: noneList }];
-  } else {
-    groups = [{ oid: UI.manualFilter, list: all.filter(x => x.owner === UI.manualFilter) }];
-  }
+  let list;
+  if (UI.manualFilter === 'all') list = all;
+  else if (UI.manualFilter === 'none') list = noneList;
+  else list = all.filter(x => x.owner === UI.manualFilter);
 
-  root.innerHTML = groups.filter(g => g.list.length).map(g => {
-    const m = g.oid === 'none' ? null : manualMember(g.oid);
-    const name = m ? m.name : '미지정';
-    const color = m ? (m.color || '#1B5E6E') : '#9AA5A0';
-    const role = m ? (m.role || '매니저') : '담당자 미지정';
-    return `
-      <div class="manual-owner-group">
-        <div class="manual-owner-head">
-          <div class="avatar" style="background:${color};">${escapeHtml(initials(name))}</div>
-          <div><div class="oname">${escapeHtml(name)}</div><div class="orole">${escapeHtml(role)}</div></div>
-          <span class="ocount">매뉴얼 ${g.list.length}</span>
-        </div>
-        <div class="manual-grid">${g.list.map(renderManualCard).join('')}</div>
-      </div>`;
-  }).join('');
+  if (!list.length) {
+    root.innerHTML = `<div class="dash-empty">이 담당자의 매뉴얼이 없습니다.</div>`;
+    return;
+  }
+  // 자동화 대시보드처럼 담당자 구분 없이 하나의 카드 그리드로 표시 (담당자는 위쪽 필터 칩으로 구분)
+  root.innerHTML = `<div class="manual-grid">${list.map(renderManualCard).join('')}</div>`;
 }
 
 function renderManualCard(x) {
   const tags = Array.isArray(x.tags) ? x.tags : [];
   const hasUrl = !!(x.url && x.url.trim());
   const hasContent = !!(x.content && x.content.trim());
+  const m = manualMember(x.owner);
+  const ownerName = m ? m.name : '미지정';
+  const ownerColor = m ? (m.color || '#1B5E6E') : '#9AA5A0';
   const acts = [];
   if (hasUrl) acts.push(`<a class="dash-link app" href="${escapeHtml(normalizeUrl(x.url))}" target="_blank" rel="noopener">▶ 열기</a>`);
   if (hasContent) acts.push(`<button class="dash-link" onclick="openManualView('${x.id}')">📄 내용 보기</button>`);
@@ -13332,6 +13323,7 @@ function renderManualCard(x) {
           ${x.category ? `<div class="manual-cat">${escapeHtml(x.category)}</div>` : ''}
         </div>
       </div>
+      <div class="manual-owner"><div class="avatar" style="background:${ownerColor};">${escapeHtml(initials(ownerName))}</div>${escapeHtml(ownerName)}</div>
       ${x.description ? `<div class="manual-desc">${escapeHtml(x.description)}</div>` : ''}
       ${tags.length ? `<div class="manual-tags">${tags.slice(0, 4).map(t => `<span class="manual-tag">${escapeHtml(t)}</span>`).join('')}</div>` : ''}
       <div class="manual-actions">
